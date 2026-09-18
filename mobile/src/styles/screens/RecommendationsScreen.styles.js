@@ -1,32 +1,13 @@
 import { StyleSheet } from 'react-native';
 import colors from '../colors';
+import { radius, spacing, font, shadow } from '../tokens';
 
 const styles = StyleSheet.create({
-  container: { padding: 16, backgroundColor: colors.background, flexGrow: 1, gap: 10 },
-  title: { fontSize: 24, fontWeight: '800', color: colors.navy },
-  subtitle: { color: colors.textGray },
-  summaryPanel: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.navy, borderRadius: 16, padding: 14 },
-  summaryItem: { flex: 1, alignItems: 'center' },
-  summaryValue: { color: colors.white, fontWeight: '900', fontSize: 24 },
-  summaryLabel: { color: '#DCEBFF', fontWeight: '800', fontSize: 12, marginTop: 2 },
-  summaryDivider: { width: 1, height: 44, backgroundColor: 'rgba(255,255,255,0.24)' },
-  card: { backgroundColor: colors.white, borderWidth: 1, borderColor: colors.border, borderRadius: 14, padding: 14, gap: 6 },
-  cardActive: { borderColor: '#BFDBFE', backgroundColor: colors.lightBlue },
-  cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', gap: 10 },
-  cardTitleBlock: { flex: 1 },
-  cardTitle: { fontWeight: '800', color: colors.fordBlue, fontSize: 17 },
-  cardAudience: { color: colors.textGray, fontWeight: '700', fontSize: 12, marginTop: 3 },
-  priorityPill: { backgroundColor: colors.warningSoft, borderRadius: 999, paddingHorizontal: 10, paddingVertical: 5 },
-  priorityHigh: { backgroundColor: colors.riskRedSoft },
-  priorityText: { color: colors.navy, fontWeight: '900', fontSize: 12 },
-  statusRow: { flexDirection: 'row', justifyContent: 'space-between', gap: 8, borderTopWidth: 1, borderTopColor: colors.borderSoft, paddingTop: 8, marginTop: 2 },
-  statusText: { color: colors.textGray, fontWeight: '900', fontSize: 12 },
-  statusTextActive: { color: colors.fordBlue },
-  impactText: { color: colors.successGreen, fontWeight: '900', fontSize: 12 },
-  noteCard: { backgroundColor: colors.lightBlue, borderWidth: 1, borderColor: '#BFDBFE', borderRadius: 14, padding: 14, gap: 6 },
-  noteTitle: { fontWeight: '800', color: colors.navy, fontSize: 16 },
-  row: { color: '#1E293B', lineHeight: 21 },
-  label: { fontWeight: '800', color: colors.navy },
+  container: { padding: spacing.lg, backgroundColor: colors.background, flexGrow: 1, gap: spacing.sm, paddingBottom: spacing.xxl - 2 },
+  intro: { marginBottom: 2 }, kicker: { color: colors.fordBlue, fontWeight: font.weight.black, fontSize: 10, letterSpacing: font.tracking.wider }, title: { fontSize: font.size.xxl + 2, fontWeight: font.weight.black, color: colors.navy, letterSpacing: -0.6, marginTop: 4 }, subtitle: { color: colors.textGray, lineHeight: 18, fontSize: 12, marginTop: 5 },
+  noteCard: { backgroundColor: colors.navy, borderRadius: radius.lg, padding: spacing.sm + 1, borderLeftWidth: 4, borderLeftColor: colors.electricBlue }, noteTop: { flexDirection: 'row', alignItems: 'center', gap: 8 }, noteMark: { width: 20, height: 20, borderRadius: radius.pill, backgroundColor: colors.electricBlue, alignItems: 'center', justifyContent: 'center' }, noteMarkText: { color: colors.navy, fontWeight: font.weight.black }, noteTitle: { color: colors.white, fontWeight: font.weight.black, fontSize: 13 }, noteText: { color: '#D7E7F7', lineHeight: 18, fontSize: 12, marginTop: 8 },
+  sectionHeader: { flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between', marginTop: 8 }, sectionTitle: { color: colors.navy, fontWeight: font.weight.black, fontSize: 17 }, sectionCode: { color: colors.muted, fontWeight: font.weight.black, fontSize: 10, letterSpacing: 0.8 },
+  card: { backgroundColor: colors.white, borderRadius: radius.lg, borderWidth: 1, borderColor: colors.border, padding: spacing.md - 2, ...shadow.sm }, cardHeader: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 }, number: { width: 28, height: 28, borderRadius: radius.sm, borderWidth: 1, borderColor: colors.electricBlue, alignItems: 'center', justifyContent: 'center' }, numberText: { color: colors.fordBlue, fontSize: 10, fontWeight: font.weight.black }, cardTitleBlock: { flex: 1 }, cardTitle: { fontWeight: font.weight.black, color: colors.navy, fontSize: 15 }, cardAudience: { color: colors.textGray, fontWeight: font.weight.bold, fontSize: 11, marginTop: 3 }, priorityText: { color: colors.successGreen, fontWeight: font.weight.black, fontSize: 10, textTransform: 'uppercase' }, priorityHigh: { color: colors.riskRed }, impactRow: { flexDirection: 'row', justifyContent: 'space-between', borderTopWidth: 1, borderBottomWidth: 1, borderColor: colors.borderSoft, marginTop: 13, paddingVertical: 9 }, impactLabel: { color: colors.muted, fontWeight: font.weight.black, fontSize: 10, letterSpacing: 0.8 }, impactText: { color: colors.fordBlue, fontWeight: font.weight.black, fontSize: 11 }, row: { color: colors.textGray, lineHeight: 19, fontSize: 12, marginTop: 11 }, label: { color: colors.navy, fontWeight: font.weight.black }, metaRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }, metaItem: { color: colors.muted, fontSize: 10, fontWeight: font.weight.bold }, openButton: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 13, paddingTop: 11, borderTopWidth: 1, borderTopColor: colors.borderSoft }, openButtonText: { color: colors.fordBlue, fontWeight: font.weight.black, fontSize: 11 }, arrow: { color: colors.fordBlue, fontWeight: font.weight.black, fontSize: 17 },
 });
 
 export default styles;

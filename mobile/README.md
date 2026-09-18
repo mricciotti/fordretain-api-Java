@@ -66,6 +66,15 @@ ANALISTA
 
 Se a claim não existir, a conta entra como `ANALISTA`. A interface oculta dashboard e predição para esse perfil, mas a API continua sendo a autoridade final de autorização.
 
-## Pendência de integração do backend
+## Integração do backend
 
-O mobile já envia o Firebase ID Token, porém a API Java atual ainda valida apenas o JWT emitido pelo endpoint próprio `/api/v1/auth/login`. Para o fluxo funcionar de ponta a ponta, a API precisa validar o token Firebase com o Firebase Admin SDK e converter a claim `role` para as authorities do Spring Security.
+A API Java valida o Firebase ID Token com o Firebase Admin SDK quando
+`FIREBASE_ENABLED=true`. Configure no backend `GOOGLE_APPLICATION_CREDENTIALS`
+com o caminho local da Service Account (ou use Application Default Credentials)
+e, opcionalmente, `FIREBASE_PROJECT_ID`. Nunca versionar esse JSON ou qualquer
+outro segredo.
+
+O backend lê a custom claim `role`, aceita somente `ADMIN`, `GERENTE` e
+`ANALISTA`, e aplica `ANALISTA` como fallback seguro. O endpoint legado
+`/api/v1/auth/login` continua disponível temporariamente, mas o mobile usa
+exclusivamente o Firebase ID Token.

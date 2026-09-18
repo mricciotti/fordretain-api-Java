@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
@@ -40,6 +41,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 // detectados automaticamente pelo slice do @WebMvcTest — não devem ser importados de novo.
 @WebMvcTest(FordRetainController.class)
 @Import({SecurityConfig.class, JwtService.class})
+@TestPropertySource(properties = {
+        "jwt.secret=ford-retain-test-secret-key-with-at-least-256-bits-2026",
+        "jwt.expiration=86400000"
+})
 class FordRetainControllerTest {
 
     @Autowired

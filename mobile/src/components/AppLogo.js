@@ -1,46 +1,37 @@
 import { StyleSheet, Text, View } from 'react-native';
 import colors from '../styles/colors';
+import { radius, font, shadow } from '../styles/tokens';
 
-export default function AppLogo({ small = false }) {
+export default function AppLogo({ small = false, light = false }) {
   return (
     <View style={[styles.logo, small && styles.logoSmall]}>
-      <Text style={[styles.text, small && styles.textSmall]}>FordRetain</Text>
+      <View style={styles.mark}><Text style={styles.markText}>FR</Text></View>
+      <Text style={[styles.text, small && styles.textSmall, light && styles.textLight]}>FordRetain</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   logo: {
-    alignSelf: 'center',
-    minWidth: 230,
-    paddingHorizontal: 24,
-    paddingVertical: 10,
-    borderRadius: 999,
-    borderWidth: 3,
-    borderColor: colors.white,
-    backgroundColor: '#07106B',
-    alignItems: 'center',
+    flexDirection: 'row',
+    alignSelf: 'flex-start',
+    gap: 8,
+    paddingVertical: 2,
     justifyContent: 'center',
-    shadowColor: colors.shadow,
-    shadowOpacity: 0.18,
-    shadowRadius: 14,
-    shadowOffset: { width: 0, height: 7 },
-    elevation: 4,
   },
   logoSmall: {
-    minWidth: 170,
-    paddingHorizontal: 18,
-    paddingVertical: 7,
-    borderWidth: 2,
+    gap: 6,
   },
+  mark: { width: 28, height: 28, borderRadius: radius.sm, backgroundColor: colors.electricBlue, alignItems: 'center', justifyContent: 'center', ...shadow.glowBlue },
+  markText: { color: colors.navy, fontWeight: font.weight.black, fontSize: 11, letterSpacing: -0.5 },
   text: {
-    color: colors.white,
-    fontSize: 28,
-    fontWeight: '900',
-    fontStyle: 'italic',
-    letterSpacing: -1,
+    color: colors.navy,
+    fontSize: 22,
+    fontWeight: font.weight.black,
+    letterSpacing: -0.8,
   },
   textSmall: {
-    fontSize: 21,
+    fontSize: 18,
   },
+  textLight: { color: colors.white },
 });

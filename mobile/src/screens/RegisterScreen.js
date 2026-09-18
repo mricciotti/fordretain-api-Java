@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { KeyboardAvoidingView, Platform, Text, TextInput, View } from 'react-native';
 import PrimaryButton from '../components/PrimaryButton';
+import AppLogo from '../components/AppLogo';
 import { getAuthErrorMessage, logout, registerWithEmail } from '../services/authService';
 import FeedbackModal from '../components/FeedbackModal';
 import styles from '../styles/screens/RegisterScreen.styles';
@@ -53,8 +54,10 @@ export default function RegisterScreen({ navigation }) {
   return (
     <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <View style={styles.card}>
+        <AppLogo />
+        <Text style={styles.kicker}>NOVO ACESSO</Text>
         <Text style={styles.title}>Criar conta</Text>
-        <Text style={styles.subtitle}>Cadastre um usuário para acessar o FordRetain</Text>
+        <Text style={styles.subtitle}>Entre na operação FordRetain em poucos passos.</Text>
         <TextInput style={styles.input} placeholder="Nome" placeholderTextColor="#94A3B8" value={name} onChangeText={setName} />
         <TextInput style={styles.input} placeholder="E-mail" placeholderTextColor="#94A3B8" autoCapitalize="none" keyboardType="email-address" value={email} onChangeText={setEmail} />
         <TextInput style={styles.input} placeholder="Senha" placeholderTextColor="#94A3B8" secureTextEntry value={password} onChangeText={setPassword} />

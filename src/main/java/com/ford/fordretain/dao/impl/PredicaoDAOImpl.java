@@ -7,11 +7,13 @@ import com.ford.fordretain.model.Cliente;
 import com.ford.fordretain.model.Predicao;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.context.annotation.Profile;
 
 import java.sql.*;
 import java.util.*;
 
 @Repository
+@Profile("!local")
 @RequiredArgsConstructor
 public class PredicaoDAOImpl implements PredicaoDAO {
 

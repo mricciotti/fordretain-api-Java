@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 import PrimaryButton from '../components/PrimaryButton';
 import AuthGuard from '../components/AuthGuard';
 import ProfileBadge from '../components/ProfileBadge';
+import RetryState from '../components/RetryState';
 import colors from '../styles/colors';
 import { getClientById } from '../services/api';
 import styles from '../styles/screens/ClientDetailsScreen.styles';
@@ -13,6 +14,12 @@ export default function ClientDetailsScreen({ route, navigation }) {
   const [client, setClient] = useState(routeClient || null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [reloadToken, setReloadToken] = useState(0);
+
+  const retry = useCallback(() => {
+    setLoading(true);
+    setReloadToken((value) => value + 1);
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -37,7 +44,7 @@ export default function ClientDetailsScreen({ route, navigation }) {
 
     loadClient();
     return () => { isMounted = false; };
-  }, [routeClient?.id, routeId]);
+  }, [routeClient?.id, routeId, reloadToken]);
 
   if (loading) {
     return (
@@ -54,9 +61,8 @@ export default function ClientDetailsScreen({ route, navigation }) {
     return (
       <AuthGuard navigation={navigation}>
         <View style={styles.container}>
-          <Text style={styles.title}>Cliente não encontrado</Text>
-          <Text style={styles.subtitle}>{error}</Text>
-          <PrimaryButton title="Voltar" onPress={() => navigation.navigate('Clients')} />
+          <RetryState title="Cliente não encontrado" message={error} onRetry={retry} />
+          <PrimaryButton title="Voltar para a carteira" variant="secondary" onPress={() => navigation.navigate('Clients')} />
         </View>
       </AuthGuard>
     );
@@ -111,8 +117,8 @@ export default function ClientDetailsScreen({ route, navigation }) {
         </View>
 
         <View style={styles.noteCard}>
-          <Text style={styles.sectionTitle}>Ações comerciais</Text>
-          <Text style={styles.row}>O backend ainda não possui um endpoint para registrar contato ou campanha. Por isso, o aplicativo mostra a recomendação sem simular uma persistência que não existe.</Text>
+          <Text style={styles.noteTitle}>Ações comerciais</Text>
+          <Text style={styles.noteText}>O backend ainda não possui um endpoint para registrar contato ou campanha. Por isso, o aplicativo mostra a recomendação sem simular uma persistência que não existe.</Text>
         </View>
       </ScrollView>
     </AuthGuard>

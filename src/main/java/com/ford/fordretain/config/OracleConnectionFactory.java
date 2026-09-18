@@ -3,11 +3,13 @@ package com.ford.fordretain.config;
 import com.ford.fordretain.exception.DatabaseException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Profile;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 
 @Component
+@Profile("!local")
 public class OracleConnectionFactory {
 
     @Value("${oracle.datasource.url}")

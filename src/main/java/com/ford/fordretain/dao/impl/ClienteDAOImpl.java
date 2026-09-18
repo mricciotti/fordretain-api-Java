@@ -7,12 +7,14 @@ import com.ford.fordretain.model.Cliente;
 import com.ford.fordretain.security.CryptoUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.context.annotation.Profile;
 
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
+@Profile("!local")
 @RequiredArgsConstructor
 public class ClienteDAOImpl implements ClienteDAO {
 

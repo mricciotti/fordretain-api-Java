@@ -1,5 +1,6 @@
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import colors from '../styles/colors';
+import { radius, spacing, font } from '../styles/tokens';
 import PrimaryButton from './PrimaryButton';
 
 const paletteByType = {
@@ -47,23 +48,23 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(11,31,58,0.55)',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 18,
+    padding: spacing.lg,
   },
   card: {
     width: '100%',
     maxWidth: 460,
     backgroundColor: colors.white,
-    borderRadius: 16,
+    borderRadius: radius.lg,
     borderWidth: 2,
-    padding: 18,
+    padding: spacing.lg,
     shadowColor: '#0F172A',
     shadowOpacity: 0.18,
     shadowRadius: 16,
     shadowOffset: { width: 0, height: 8 },
     elevation: 6,
   },
-  typeChip: { alignSelf: 'flex-start', borderRadius: 999, paddingHorizontal: 10, paddingVertical: 4, marginBottom: 10 },
-  typeChipText: { fontWeight: '800', fontSize: 12 },
-  title: { fontSize: 22, fontWeight: '800', color: colors.navy, marginBottom: 8 },
-  message: { color: '#334155', lineHeight: 22, marginBottom: 10 },
+  typeChip: { alignSelf: 'flex-start', borderRadius: radius.pill, paddingHorizontal: 10, paddingVertical: 4, marginBottom: spacing.sm },
+  typeChipText: { fontWeight: font.weight.bold, fontSize: 12 },
+  title: { fontSize: font.size.xxl, fontWeight: font.weight.bold, color: colors.navy, marginBottom: spacing.xs },
+  message: { color: '#334155', lineHeight: 22, marginBottom: spacing.sm },
 });

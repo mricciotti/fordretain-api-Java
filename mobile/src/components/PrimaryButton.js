@@ -1,5 +1,6 @@
 import { Pressable, StyleSheet, Text } from 'react-native';
 import colors from '../styles/colors';
+import { radius, spacing, font, shadow } from '../styles/tokens';
 
 export default function PrimaryButton({ title, onPress, variant = 'primary', color, disabled = false }) {
   const isSecondary = variant === 'secondary';
@@ -26,22 +27,19 @@ export default function PrimaryButton({ title, onPress, variant = 'primary', col
 
 const styles = StyleSheet.create({
   button: {
-    paddingVertical: 15,
-    paddingHorizontal: 18,
-    borderRadius: 18,
+    paddingVertical: spacing.sm + 1,
+    paddingHorizontal: spacing.lg,
+    borderRadius: radius.md,
     alignItems: 'center',
     justifyContent: 'center',
     marginVertical: 6,
     borderWidth: 1,
-    shadowColor: colors.shadow,
-    shadowOpacity: 0.12,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 5 },
-    elevation: 3,
+    ...shadow.sm,
   },
   primaryButton: {
     backgroundColor: colors.fordBlue,
     borderColor: colors.fordBlue,
+    ...shadow.glowBlue,
   },
   secondaryButton: {
     backgroundColor: colors.surface,
@@ -51,10 +49,10 @@ const styles = StyleSheet.create({
     opacity: 0.92,
     transform: [{ scale: 0.985 }],
   },
-  disabled: { opacity: 0.55 },
+  disabled: { opacity: 0.55, shadowOpacity: 0 },
   text: {
-    fontWeight: '800',
-    fontSize: 15,
+    fontWeight: font.weight.bold,
+    fontSize: font.size.lg - 1,
     letterSpacing: 0.2,
   },
   primaryText: {

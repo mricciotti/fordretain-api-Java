@@ -1,6 +1,7 @@
 import { ActivityIndicator, View, Text, StyleSheet } from 'react-native';
 import PrimaryButton from './PrimaryButton';
 import colors from '../styles/colors';
+import { radius, spacing, font } from '../styles/tokens';
 import useAuth from '../hooks/useAuth';
 import AppShell from './AppShell';
 
@@ -58,9 +59,9 @@ export default function RoleGuard({ allowedRoles, navigation, children, message 
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background, padding: 16, justifyContent: 'center' },
-  card: { backgroundColor: colors.white, borderRadius: 16, borderWidth: 1, borderColor: colors.border, padding: 18 },
-  title: { color: colors.navy, fontSize: 24, fontWeight: '800', marginBottom: 8 },
-  message: { color: '#334155', lineHeight: 21, marginBottom: 8 },
-  profile: { color: colors.fordBlue, fontWeight: '800', marginBottom: 10 },
+  container: { flex: 1, backgroundColor: colors.background, padding: spacing.md, justifyContent: 'center' },
+  card: { backgroundColor: colors.white, borderRadius: radius.lg, borderWidth: 1, borderColor: colors.border, padding: spacing.lg },
+  title: { color: colors.navy, fontSize: font.size.xxl, fontWeight: font.weight.bold, marginBottom: spacing.xs },
+  message: { color: '#334155', lineHeight: 21, marginBottom: spacing.xs },
+  profile: { color: colors.fordBlue, fontWeight: font.weight.bold, marginBottom: spacing.sm },
 });

@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
 import RoleGuard from '../components/RoleGuard';
 import AppLogo from '../components/AppLogo';
+import RetryState from '../components/RetryState';
 import colors from '../styles/colors';
 import { getDashboard } from '../services/api';
 import styles from '../styles/screens/DashboardScreen.styles';
@@ -124,9 +125,14 @@ export default function DashboardScreen({ navigation }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [activeChart, setActiveChart] = useState('vin');
+  const [reloadToken, setReloadToken] = useState(0);
+
+  const retry = useCallback(() => setReloadToken((value) => value + 1), []);
 
   useEffect(() => {
     async function loadDashboard() {
+      setLoading(true);
+      setError('');
       try {
         const data = await getDashboard();
         setDashboard(data);
@@ -138,7 +144,7 @@ export default function DashboardScreen({ navigation }) {
     }
 
     loadDashboard();
-  }, []);
+  }, [reloadToken]);
 
   const chartConfig = useMemo(() => {
     if (!dashboard) return null;
@@ -185,7 +191,7 @@ export default function DashboardScreen({ navigation }) {
     return (
       <RoleGuard navigation={navigation} allowedRoles={['ADMIN', 'GERENTE']} message="O dashboard executivo é exclusivo para os perfis Administrador e Gerente.">
         <View style={styles.loadingContainer}>
-          <Text style={styles.loadingText}>{error || 'Dashboard indisponível.'}</Text>
+          <RetryState title="Dashboard indisponível" message={error || 'Não foi possível carregar os indicadores.'} onRetry={retry} />
           <ActionButton title="Voltar para Home" onPress={() => navigation.navigate('Home')} />
         </View>
       </RoleGuard>
@@ -202,7 +208,7 @@ export default function DashboardScreen({ navigation }) {
       <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
         <View style={styles.hero}>
           <View style={styles.heroTop}>
-            <AppLogo small />
+            <AppLogo small light />
 
             <View style={styles.heroBadge}>
               <Text style={styles.heroBadgeText}>Painel executivo</Text>

@@ -2,3 +2,9 @@
 /target/
 
 .env
+
+# Firebase Admin / Google Cloud credentials
+firebase-service-account*.json
+firebase-credentials*.json
+service-account*.json
+*-firebase-adminsdk-*.json

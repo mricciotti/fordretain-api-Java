@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Map;
@@ -25,6 +26,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 // senão o contexto falha com bean duplicado. Só importamos o que NÃO é auto-detectado.
 @WebMvcTest(AuthController.class)
 @Import({SecurityConfig.class, JwtService.class})
+@TestPropertySource(properties = {
+        "jwt.secret=ford-retain-test-secret-key-with-at-least-256-bits-2026",
+        "jwt.expiration=86400000"
+})
 class AuthControllerTest {
 
     @Autowired

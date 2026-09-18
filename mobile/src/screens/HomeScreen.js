@@ -1,70 +1,31 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
 import colors from '../styles/colors';
 import AuthGuard from '../components/AuthGuard';
+import RetryState from '../components/RetryState';
 import useAuth from '../hooks/useAuth';
 import { getDashboard, getPriorityLeads } from '../services/api';
 import styles from '../styles/screens/HomeScreen.styles';
 
-function formatPercent(value) {
-  if (value === null || value === undefined) return '--';
-  return `${value}%`;
-}
+function formatPercent(value) { return value === null || value === undefined ? '--' : `${value}%`; }
 
 function MetricTile({ label, value, tone = 'blue', onPress }) {
-  const toneStyle = styles[`metric_${tone}`] || styles.metric_blue;
-  const Content = (
-    <>
-      <Text style={styles.metricValue}>{value}</Text>
-      <Text style={styles.metricLabel}>{label}</Text>
-    </>
-  );
-
-  if (onPress) {
-    return (
-      <Pressable style={({ pressed }) => [styles.metricTile, toneStyle, pressed && styles.pressed]} onPress={onPress}>
-        {Content}
-      </Pressable>
-    );
-  }
-
-  return <View style={[styles.metricTile, toneStyle]}>{Content}</View>;
+  const Content = <><Text style={[styles.metricValue, tone === 'dark' && styles.metricValueDark]}>{value}</Text><Text style={[styles.metricLabel, tone === 'dark' && styles.metricLabelDark]}>{label}</Text></>;
+  return onPress ? <Pressable style={[styles.metricTile, styles[`metric_${tone}`]]} onPress={onPress}>{Content}</Pressable> : <View style={[styles.metricTile, styles[`metric_${tone}`]]}>{Content}</View>;
 }
 
-function LeadRow({ lead, highlighted = false, onPress }) {
+function LeadRow({ lead, onPress, first }) {
   return (
-    <View style={[styles.leadRow, highlighted && styles.leadRowHighlighted]}>
-      <View style={styles.leadTop}>
-        <View style={styles.leadInfo}>
-          <Text style={styles.leadName}>{lead.nome}</Text>
-          <Text style={styles.leadMeta}>{lead.veiculo} • {lead.prioridade}</Text>
-        </View>
-        <View style={styles.riskPill}>
-          <Text style={styles.riskText}>{lead.riscoEvasao}%</Text>
-        </View>
-      </View>
-
-      {highlighted ? <Text style={styles.leadReason}>{lead.motivoPriorizacao}</Text> : null}
-
-      <Pressable style={({ pressed }) => [styles.leadCta, pressed && styles.pressed]} onPress={onPress}>
-        <Text style={styles.leadCtaText}>{highlighted ? 'Abrir cliente crítico' : 'Abrir detalhes'}</Text>
-      </Pressable>
-    </View>
-  );
-}
-
-function AreaCard({ title, subtitle, icon, tone = 'blue', onPress }) {
-  const toneStyle = styles[`area_${tone}`] || styles.area_blue;
-
-  return (
-    <Pressable style={({ pressed }) => [styles.areaCard, toneStyle, pressed && styles.pressed]} onPress={onPress}>
-      <View style={styles.areaIconBox}>
-        <Text style={styles.areaIcon}>{icon}</Text>
-      </View>
-      <Text style={styles.areaTitle}>{title}</Text>
-      <Text style={styles.areaSubtitle}>{subtitle}</Text>
+    <Pressable style={[styles.leadRow, first && styles.leadRowFirst]} onPress={onPress}>
+      <View style={styles.leadRank}><Text style={styles.leadRankText}>{first ? '01' : '•'}</Text></View>
+      <View style={styles.leadInfo}><Text style={styles.leadName}>{lead.nome}</Text><Text style={styles.leadMeta}>{lead.veiculo} · {lead.prioridade}</Text></View>
+      <View style={styles.leadScore}><Text style={styles.riskText}>{lead.riscoEvasao}%</Text><Text style={styles.scoreLabel}>risco</Text></View>
     </Pressable>
   );
+}
+
+function ToolRow({ index, title, caption, onPress }) {
+  return <Pressable style={styles.toolRow} onPress={onPress}><Text style={styles.toolIndex}>{index}</Text><View style={styles.toolCopy}><Text style={styles.toolTitle}>{title}</Text><Text style={styles.toolCaption}>{caption}</Text></View><Text style={styles.toolArrow}>→</Text></Pressable>;
 }
 
 export default function HomeScreen({ navigation }) {
@@ -74,122 +35,67 @@ export default function HomeScreen({ navigation }) {
   const [priorityLeads, setPriorityLeads] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [reloadToken, setReloadToken] = useState(0);
+
+  const retry = useCallback(() => setReloadToken((value) => value + 1), []);
 
   useEffect(() => {
     let isMounted = true;
-
     async function loadHomeData() {
+      setLoading(true);
+      setError('');
       try {
-        const [dashboardData, leadsData] = await Promise.all([
-          isManager ? getDashboard() : Promise.resolve(null),
-          getPriorityLeads(3),
-        ]);
-
-        if (isMounted) {
-          setDashboard(dashboardData);
-          setPriorityLeads(leadsData);
-        }
+        const [dashboardData, leadsData] = await Promise.all([isManager ? getDashboard() : Promise.resolve(null), getPriorityLeads(3)]);
+        if (isMounted) { setDashboard(dashboardData); setPriorityLeads(leadsData); }
       } catch (requestError) {
-        if (isMounted) {
-          setError(requestError?.message || 'Não foi possível carregar os dados da API.');
-        }
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
-      }
+        if (isMounted) setError(requestError?.message || 'Não foi possível carregar os dados da API.');
+      } finally { if (isMounted) setLoading(false); }
     }
-
     loadHomeData();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [isManager]);
+    return () => { isMounted = false; };
+  }, [isManager, reloadToken]);
 
   return (
     <AuthGuard navigation={navigation}>
       <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
-        <View style={styles.summaryPanel}>
-          <View style={styles.summaryTop}>
-            <View style={styles.summaryTitleBlock}>
-              <Text style={styles.eyebrow}>{isManager ? 'Central do gerente' : 'Central de atendimento'}</Text>
-              <Text style={styles.title}>Olá, {user?.name || 'usuário'}</Text>
-            </View>
+        <View style={styles.introRow}>
+          <View><Text style={styles.kicker}>{isManager ? 'OPERAÇÃO · GESTÃO' : 'OPERAÇÃO · ATENDIMENTO'}</Text><Text style={styles.greeting}>Olá, {user?.name?.split(' ')[0] || 'usuário'}</Text></View>
+          <View style={styles.dateMark}><Text style={styles.dateMarkTop}>HOJE</Text><Text style={styles.dateMarkBottom}>FORD</Text></View>
+        </View>
 
-            <View style={styles.roleBadge}>
-              <Text style={styles.roleBadgeText}>{user?.role || 'Perfil'}</Text>
-            </View>
+        <View style={styles.statusBand}>
+          <View style={styles.statusIndicator}><View style={styles.statusDot} /><Text style={styles.statusLabel}>BASE CONECTADA</Text></View>
+          <Text style={styles.statusText}>{loading ? 'Atualizando indicadores...' : 'Última leitura disponível'}</Text>
+        </View>
+
+        <View style={styles.sectionHeader}><View><Text style={styles.sectionTitle}>Leitura rápida</Text><Text style={styles.sectionSubtitle}>Um resumo para começar o turno.</Text></View><Text style={styles.sectionCode}>01 / 03</Text></View>
+        {error && !loading ? (
+          <RetryState title="Não foi possível atualizar a Home" message={error} onRetry={retry} />
+        ) : (
+          <View style={styles.metricGrid}>
+            {loading ? <View style={styles.loadingInline}><ActivityIndicator color={colors.fordBlue} /><Text style={styles.loadingText}>Carregando dados do dia...</Text></View> : isManager ? <>
+              <MetricTile label="VIN Share estimado" value={formatPercent(dashboard?.vinShareEstimado)} />
+              <MetricTile label="Clientes em alto risco" value={String(dashboard?.highRisk || 0)} tone="red" onPress={() => navigation.navigate('Clients')} />
+              <MetricTile label="Clientes na base" value={String(dashboard?.total || 0)} tone="dark" />
+              <MetricTile label="Perfis mapeados" value={String(dashboard?.clientesPorPerfil?.length || 0)} tone="blue" />
+            </> : <>
+              <MetricTile label="Fila prioritária" value={String(priorityLeads.length)} tone="red" onPress={() => navigation.navigate('Clients')} />
+              <MetricTile label="Carteira completa" value="Abrir" tone="dark" onPress={() => navigation.navigate('Clients')} />
+            </>}
           </View>
+        )}
 
-          <Text style={styles.summaryText}>
-            {isManager
-              ? 'Comece pelo risco da carteira, avance para clientes críticos e acompanhe a ação comercial até a decisão.'
-              : 'Priorize clientes em risco, classifique novos perfis e registre ações de retenção com base nas recomendações.'}
-          </Text>
-
-          {error ? <Text style={styles.loadingText}>{error}</Text> : null}
-
-          {loading ? (
-            <View style={styles.loadingInline}>
-              <ActivityIndicator color={colors.white} />
-              <Text style={styles.loadingText}>Carregando dados do dia...</Text>
-            </View>
-          ) : (
-            <View style={styles.metricGrid}>
-              {isManager ? (
-                <>
-                  <MetricTile label="VIN Share" value={formatPercent(dashboard?.vinShareEstimado)} />
-                  <MetricTile label="Alto risco" value={String(dashboard?.highRisk || 0)} tone="red" onPress={() => navigation.navigate('Clients')} />
-                  <MetricTile label="Total de clientes" value={String(dashboard?.total || 0)} tone="yellow" />
-                  <MetricTile label="Perfis mapeados" value={String(dashboard?.clientesPorPerfil?.length || 0)} tone="green" />
-                </>
-              ) : (
-                <>
-                  <MetricTile label="Leads críticos" value={String(priorityLeads.length)} tone="red" onPress={() => navigation.navigate('Clients')} />
-                  <MetricTile label="Clientes em risco" value="Consultar" tone="green" onPress={() => navigation.navigate('Clients')} />
-                </>
-              )}
-            </View>
-          )}
+        <View style={styles.sectionHeader}><View><Text style={styles.sectionTitle}>Fila prioritária</Text><Text style={styles.sectionSubtitle}>Comece por quem precisa de contexto.</Text></View><Text style={styles.sectionCode}>02 / 03</Text></View>
+        <View style={styles.queueCard}>
+          {priorityLeads.length ? priorityLeads.map((lead, index) => <LeadRow key={lead.id} lead={lead} first={index === 0} onPress={() => navigation.navigate('ClientDetails', { client: lead })} />) : <Text style={styles.emptyText}>Nenhum cliente prioritário encontrado.</Text>}
+          <Pressable style={styles.queueFooter} onPress={() => navigation.navigate('Clients')}><Text style={styles.queueFooterText}>Ver carteira completa</Text><Text style={styles.toolArrow}>→</Text></Pressable>
         </View>
 
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Áreas do app</Text>
-          <Text style={styles.sectionSubtitle}>Acesse também pelos cards ou pelo menu superior.</Text>
-        </View>
-
-        <View style={styles.areaGrid}>
-          {isManager ? (
-            <AreaCard title="Dashboard" subtitle="KPIs e VIN Share" icon="📊" tone="blue" onPress={() => navigation.navigate('Dashboard')} />
-          ) : null}
-
-          <AreaCard title="Clientes" subtitle="Risco e prioridade" icon="👥" tone="green" onPress={() => navigation.navigate('Clients')} />
-
-          {isManager ? (
-            <AreaCard title="Classificação" subtitle="Previsão de perfil" icon="🤖" tone="purple" onPress={() => navigation.navigate('Prediction')} />
-          ) : null}
-
-          {isManager ? (
-            <AreaCard title="Perfis" subtitle="Segmentos comportamentais" icon="🧩" tone="yellow" onPress={() => navigation.navigate('Profiles')} />
-          ) : null}
-
-          <AreaCard title="Recomendações" subtitle="Campanhas e ações" icon="🎯" tone="red" onPress={() => navigation.navigate('Recommendations')} />
-        </View>
-
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Fila prioritária</Text>
-          <Text style={styles.sectionSubtitle}>Clientes que merecem atenção primeiro.</Text>
-        </View>
-
-        <View style={styles.card}>
-          {priorityLeads.length ? (
-            priorityLeads.map((lead) => (
-              <LeadRow key={lead.id} lead={lead} highlighted={lead.id === priorityLeads[0]?.id} onPress={() => navigation.navigate('ClientDetails', { client: lead })} />
-            ))
-          ) : (
-            <Text style={styles.emptyText}>Nenhum lead prioritário encontrado.</Text>
-          )}
+        <View style={styles.sectionHeader}><View><Text style={styles.sectionTitle}>Atalhos de trabalho</Text><Text style={styles.sectionSubtitle}>Acesse as ferramentas sem procurar no menu.</Text></View><Text style={styles.sectionCode}>03 / 03</Text></View>
+        <View style={styles.toolsCard}>
+          {isManager ? <ToolRow index="01" title="Controle executivo" caption="Indicadores e distribuição da carteira" onPress={() => navigation.navigate('Dashboard')} /> : null}
+          {isManager ? <ToolRow index="02" title="Classificar cliente" caption="Simulação de perfil comportamental" onPress={() => navigation.navigate('Prediction')} /> : null}
+          <ToolRow index={isManager ? '03' : '01'} title="Orientações de retenção" caption="Estratégias por perfil e nível de risco" onPress={() => navigation.navigate('Recommendations')} />
         </View>
       </ScrollView>
     </AuthGuard>

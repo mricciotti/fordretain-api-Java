@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -26,7 +27,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtAuthFilter jwtAuthFilter;
+    private final ObjectProvider<JwtAuthFilter> jwtAuthFilterProvider;
+    private final ObjectProvider<LocalVisualAuthFilter> localVisualAuthFilterProvider;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -59,12 +61,22 @@ public class SecurityConfig {
                         // Qualquer outra rota autenticada
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                ;
+
+        JwtAuthFilter jwtAuthFilter = jwtAuthFilterProvider.getIfAvailable();
+        LocalVisualAuthFilter localVisualAuthFilter = localVisualAuthFilterProvider.getIfAvailable();
+        if (jwtAuthFilter != null) {
+            http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+        }
+        if (localVisualAuthFilter != null) {
+            http.addFilterBefore(localVisualAuthFilter, UsernamePasswordAuthenticationFilter.class);
+        }
 
         return http.build();
     }
 
     @Bean
+    @org.springframework.context.annotation.Profile("!local")
     public FilterRegistrationBean<JwtAuthFilter> jwtAuthFilterRegistration(JwtAuthFilter filter) {
         // JwtAuthFilter é @Component, então o Spring Boot o registraria automaticamente
         // como um filtro Servlet genérico (rodando em TODA requisição, fora de ordem),

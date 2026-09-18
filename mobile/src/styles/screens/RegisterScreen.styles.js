@@ -1,13 +1,26 @@
 import { StyleSheet } from 'react-native';
 import colors from '../colors';
+import { radius, spacing, font, shadow } from '../tokens';
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.navy, justifyContent: 'center', alignItems: 'center', padding: 18 },
-  card: { width: '100%', maxWidth: 540, backgroundColor: colors.white, borderRadius: 28, padding: 24, borderWidth: 1, borderColor: 'rgba(255,255,255,0.45)', shadowColor: colors.shadow, shadowOpacity: 0.22, shadowRadius: 24, shadowOffset: { width: 0, height: 12 }, elevation: 7 },
-  title: { fontSize: 30, fontWeight: '900', color: colors.navy, marginBottom: 6, textAlign: 'center' },
-  subtitle: { color: colors.textGray, marginBottom: 18, lineHeight: 21, textAlign: 'center', fontWeight: '600' },
-  input: { borderWidth: 1, borderColor: colors.border, borderRadius: 16, padding: 14, marginBottom: 10, color: colors.navy, backgroundColor: colors.surfaceSoft },
-  roleNotice: { color: colors.textGray, fontSize: 12, lineHeight: 18, marginBottom: 6 },
+  container: { flex: 1, backgroundColor: colors.navy, justifyContent: 'center', alignItems: 'center', padding: spacing.lg },
+  card: {
+    width: '100%',
+    maxWidth: 540,
+    backgroundColor: colors.white,
+    borderRadius: radius.xl,
+    borderTopWidth: 4,
+    borderTopColor: colors.electricBlue,
+    padding: spacing.xl,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.45)',
+    ...shadow.md,
+  },
+  kicker: { color: colors.fordBlue, fontWeight: font.weight.black, fontSize: 10, letterSpacing: font.tracking.wider, marginTop: spacing.xl },
+  title: { fontSize: font.size.hero - 2, fontWeight: font.weight.black, color: colors.navy, marginTop: 5, marginBottom: 6 },
+  subtitle: { color: colors.textGray, marginBottom: spacing.md + 2, lineHeight: 21, fontWeight: font.weight.regular },
+  input: { borderWidth: 1, borderColor: colors.border, borderRadius: radius.sm, padding: spacing.md - 2, marginBottom: spacing.sm - 2, color: colors.navy, backgroundColor: colors.surfaceSoft },
+  roleNotice: { color: colors.textGray, fontSize: 12, lineHeight: 18, marginBottom: spacing.xs - 2 },
 });
 
 export default styles;

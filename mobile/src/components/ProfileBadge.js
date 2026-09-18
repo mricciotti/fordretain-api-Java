@@ -1,22 +1,25 @@
 import { View, Text, StyleSheet } from 'react-native';
+import colors from '../styles/colors';
+import { radius, font } from '../styles/tokens';
 
 const PROFILE_COLORS = {
-  'Cliente Fiel': '#16A34A',
-  'Cliente Econômico': '#F59E0B',
-  'Cliente Esquecido': '#1E5AA8',
-  'Cliente de Abandono': '#DC2626',
-  'Cliente em Risco': '#DC2626',
+  'Cliente Fiel': colors.successGreen,
+  'Cliente Econômico': colors.warningYellow,
+  'Cliente Esquecido': colors.fordBlue,
+  'Cliente de Abandono': colors.riskRed,
+  'Cliente em Risco': colors.riskRed,
 };
 
 export default function ProfileBadge({ perfil }) {
+  const tone = PROFILE_COLORS[perfil] || colors.muted;
   return (
-    <View style={[styles.badge, { backgroundColor: PROFILE_COLORS[perfil] || '#94A3B8' }]}>
-      <Text style={styles.text}>{perfil}</Text>
+    <View style={[styles.badge, { borderColor: tone, backgroundColor: `${tone}1A` }]}>
+      <Text style={[styles.text, { color: tone }]}>{perfil}</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  badge: { borderRadius: 999, paddingHorizontal: 10, paddingVertical: 5, alignSelf: 'flex-start' },
-  text: { color: '#FFFFFF', fontSize: 12, fontWeight: '700' },
+  badge: { borderWidth: 1, borderRadius: radius.pill, paddingHorizontal: 10, paddingVertical: 5, alignSelf: 'flex-start' },
+  text: { fontSize: 10, fontWeight: font.weight.black, letterSpacing: 0.3 },
 });

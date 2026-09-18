@@ -44,8 +44,9 @@ export default function LoginScreen({ navigation, route }) {
     <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <View style={styles.card}>
         <AppLogo />
+        <Text style={styles.kicker}>CENTRAL DE RETENÇÃO</Text>
         <Text style={styles.title}>Bem-vindo</Text>
-        <Text style={styles.subtitle}>Acesse o FordRetain para acompanhar clientes, riscos e ações de retenção.</Text>
+        <Text style={styles.subtitle}>Decisões melhores para manter clientes na rede Ford.</Text>
 
         <TextInput style={styles.input} placeholder="E-mail" placeholderTextColor="#94A3B8" autoCapitalize="none" keyboardType="email-address" value={email} onChangeText={setEmail} />
         <TextInput style={styles.input} placeholder="Senha" placeholderTextColor="#94A3B8" secureTextEntry value={password} onChangeText={setPassword} />

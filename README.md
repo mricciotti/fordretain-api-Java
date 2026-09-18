@@ -5,6 +5,19 @@
 
 ---
 
+### Rodando localmente sem Oracle (testes visuais)
+
+Para validar o aplicativo e os endpoints com dados de demonstração em memória, sem conexão com o Oracle:
+
+```powershell
+mvn spring-boot:run "-Dspring-boot.run.profiles=local"
+```
+
+O perfil `local` desativa o datasource/Flyway, carrega uma carteira fictícia e mantém o Oracle como padrão nos demais ambientes. A porta continua sendo `8080`.
+
+> O modo local aceita qualquer Bearer Token somente para facilitar testes visuais. Não use o perfil `local` em produção.
+
+
 ## Integrantes
 
 | Nome | RM |
@@ -363,6 +376,22 @@ O **Flyway** executa as migrações automaticamente ao iniciar a aplicação:
 - `V1__create_tables.sql` — cria as tabelas `clientes` e `predicoes` (sintaxe Oracle)
 - `V2__insert_sample_data.sql` — insere dados de exemplo para testes
 - `V3__fix_predicao_cascade_delete.sql` — ajusta a FK `predicoes → clientes` para `ON DELETE CASCADE` (necessário para o `DELETE /clientes/{id}` funcionar sem violar integridade referencial)
+
+## Firebase Admin e autenticação mobile
+
+O mobile envia um Firebase ID Token no header `Authorization: Bearer`. Para
+validá-lo no backend, habilite `FIREBASE_ENABLED=true` e forneça credenciais
+por Application Default Credentials, normalmente via:
+
+```powershell
+$env:GOOGLE_APPLICATION_CREDENTIALS="C:\caminho\firebase-service-account.json"
+$env:FIREBASE_PROJECT_ID="seu-projeto-firebase"
+```
+
+O filtro aceita Firebase ID Tokens e o JWT legado de `/api/v1/auth/login`
+durante a transição. A claim `role` é lida somente após a validação do token;
+valores ausentes ou desconhecidos recebem `ANALISTA`. Nunca versione o JSON da
+Service Account, credenciais Oracle ou segredos.
 
 ---
 

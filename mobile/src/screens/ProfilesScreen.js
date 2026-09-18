@@ -61,8 +61,8 @@ export default function ProfilesScreen({ navigation }) {
         ))}
 
         <View style={styles.explanationCard}>
-          <Text style={styles.sectionTitle}>Como isso entra no modelo</Text>
-          <Text style={styles.row}>Na etapa acadêmica, os perfis descobertos pelo clustering viram a variável-alvo da classificação. Depois, o app simula a previsão de novos clientes usando apenas dados da compra, sem usar dados pós-venda.</Text>
+          <Text style={styles.explanationTitle}>Como isso entra no modelo</Text>
+          <Text style={styles.explanationRow}>Na etapa acadêmica, os perfis descobertos pelo clustering viram a variável-alvo da classificação. Depois, o app simula a previsão de novos clientes usando apenas dados da compra, sem usar dados pós-venda.</Text>
         </View>
       </ScrollView>
     </RoleGuard>

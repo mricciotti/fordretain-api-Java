@@ -31,5 +31,6 @@ export default function useRouterNavigation() {
     navigate: (screenName, params) => go('push', screenName, params),
     replace: (screenName, params) => go('replace', screenName, params),
     goBack: () => router.back(),
+    canGoBack: () => router.canGoBack(),
   };
 }
